@@ -1,5 +1,8 @@
+import React from 'react';
+import ReactDOM from 'react-dom';
+import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+
 const e = React.createElement;
-const { DragDropContext, Draggable, Droppable } = window.ReactBeautifulDnd;
 
 class KanbanCard extends React.Component {
     render () {
