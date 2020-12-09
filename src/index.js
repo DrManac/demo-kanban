@@ -20,13 +20,18 @@ class App extends React.Component {
         this.setState(this.model.getdata())
     }
 
+    createColumn = (name) => {
+        this.model.createColumn(name);
+        this.setState(this.model.getdata())
+    }
+
     render() {
         return [
             e(Toolbar, {key: 'toolbar', name:"Randomize", action: ()=>{
                 this.model.randomize()
                 this.setState(this.model.getdata())
             }}),
-            e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard})
+            e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard, createColumn: this.createColumn})
         ]
     }
 }

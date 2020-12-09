@@ -34,6 +34,45 @@ class KanbanColumn extends React.Component {
     }
 }
 
+
+export class AddColumnButton extends React.Component {
+    constructor() {
+        super()
+        this.state = {editMode: false}
+    }
+
+    beginEditMode = () => { this.setState({name: 'New column', editMode: true}); }
+    endEditMode = () => { this.setState({editMode: false}); }
+    
+    onAccept = () => {
+        this.props.addCard(this.state.name);
+        this.endEditMode();
+    }
+
+    handleNameChange = (event) => {
+        this.setState({name: event.target.value});
+    }
+
+    render() {
+        var content;
+        if(this.state.editMode)
+            content = <div className='card'>
+                Enter column name
+                <input type='text' value={this.state.name} onChange={this.handleNameChange}/>
+                <input type='button' value='OK' onClick={this.onAccept} />
+                <input type='button' value='Cancel' onClick={this.endEditMode} />
+            </div>
+        else
+            content = <div className='card_button' onClick={this.beginEditMode}>
+                Add Column...
+            </div>
+
+        return <div className='col_empty'>
+                {content}
+            </div>
+    }
+}
+
 export class Kanban extends React.Component {
     constructor() {
         super()
@@ -48,6 +87,7 @@ export class Kanban extends React.Component {
             {
                 this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c}></KanbanColumn>)
             }
+            <AddColumnButton addCard={this.props.createColumn}/>
         </DragDropContext>
     }
   }
