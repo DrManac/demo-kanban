@@ -25,17 +25,23 @@ class App extends React.Component {
         this.setState(this.model.getdata())
     }
 
+    createCard = (name, column) => {
+        this.model.createCard(name, column);
+        this.setState(this.model.getdata())
+    }
+
     render() {
         return [
             e(Toolbar, {key: 'toolbar', name:"Randomize", action: ()=>{
-                this.model.randomize()
-                this.setState(this.model.getdata())
-            }}),
-            e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard, createColumn: this.createColumn})
+                    this.model.randomize()
+                    this.setState(this.model.getdata())
+                }}),
+            e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard,
+                createColumn: this.createColumn,
+                createCard: this.createCard})
         ]
     }
 }
 
 const domContainer = document.querySelector('.kanban');
 ReactDOM.render(e(App), domContainer);
-
