@@ -5,10 +5,10 @@ class KanbanCard extends React.Component {
     render () {
         return <Draggable draggableId={this.props.card.id} index={this.props.index}>
             {
-                (provided) => <div className='card' ref={provided.innerRef} 
-                    {...provided.dragHandleProps} {...provided.draggableProps}>
-                        {this.props.card.text}
-                    </div>
+                (provided) => <div className='card' ref={provided.innerRef}
+                                   {...provided.dragHandleProps} {...provided.draggableProps}>
+                    {this.props.card.text}
+                </div>
             }
         </Draggable>
     }
@@ -23,10 +23,11 @@ class KanbanColumn extends React.Component {
                     (provided) => <div>
                         <div ref={provided.innerRef} {...provided.droppableProps} {...provided.droppablePlaceholder}>
                             {
-                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c}></KanbanCard>)
+                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c}/>)
                             }
                         </div>
                         {provided.placeholder}
+                        <AddCardButton addCard={this.props.createCard} column={this.props.column.id}/>
                     </div>
                 }
             </Droppable>
@@ -36,16 +37,16 @@ class KanbanColumn extends React.Component {
 
 
 export class AddColumnButton extends React.Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.state = {editMode: false}
     }
 
     beginEditMode = () => { this.setState({name: 'New column', editMode: true}); }
     endEditMode = () => { this.setState({editMode: false}); }
-    
+
     onAccept = () => {
-        this.props.addCard(this.state.name);
+        this.props.createColumn(this.state.name);
         this.endEditMode();
     }
 
@@ -54,8 +55,8 @@ export class AddColumnButton extends React.Component {
     }
 
     render() {
-        var content;
-        if(this.state.editMode)
+        let content;
+        if (this.state.editMode)
             content = <div className='card'>
                 Enter column name
                 <input type='text' value={this.state.name} onChange={this.handleNameChange}/>
@@ -68,33 +69,73 @@ export class AddColumnButton extends React.Component {
             </div>
 
         return <div className='col_empty'>
-                {content}
+            {content}
+        </div>
+    }
+}
+
+export class AddCardButton extends React.Component
+{
+    constructor(props) {
+        super(props)
+        this.state = {editMode: false}
+    }
+
+    beginEditMode = () => { this.setState({name: 'New card', editMode: true}); }
+    endEditMode = () => { this.setState({editMode: false}); }
+
+    onAccept = () => {
+        this.props.addCard(this.state.name, this.props.column);
+        this.endEditMode();
+    }
+
+    handleNameChange = (event) => {
+        this.setState({name: event.target.value});
+    }
+
+    render() {
+        let content;
+        if (this.state.editMode)
+            content = <div className='card'>
+                Enter card name
+                <input type='text' value={this.state.name} onChange={this.handleNameChange}/>
+                <input type='button' value='OK' onClick={this.onAccept} />
+                <input type='button' value='Cancel' onClick={this.endEditMode} />
             </div>
+        else
+            content = <div className='card_button' onClick={this.beginEditMode}>
+                Add Card...
+            </div>
+
+        return <div className='card_empty'>
+            {content}
+        </div>
     }
 }
 
 export class Kanban extends React.Component {
-    constructor() {
-        super()
+    constructor(props) {
+        super(props)
         this.onDragEnd = this.onDragEnd.bind(this)
     }
     onDragEnd(result) {
         if(!result.destination) return
-        this.props.moveCard(result.source.droppableId, result.source.index, result.destination.droppableId, result.destination.index)
+        this.props.moveCard(result.source.droppableId, result.source.index,
+            result.destination.droppableId, result.destination.index)
     }
     render () {
         return <DragDropContext onDragEnd={this.onDragEnd}>
             {
-                this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c}></KanbanColumn>)
+                this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c} createCard={this.props.createCard}/>)
             }
-            <AddColumnButton addCard={this.props.createColumn}/>
+            <AddColumnButton createColumn={this.props.createColumn}/>
         </DragDropContext>
     }
-  }
+}
 
 export class Toolbar extends React.Component {
     render () {
-        return <input type='button' value={this.props.name} onClick={this.props.action}></input>
+        return <input type='button' value={this.props.name} onClick={this.props.action}/>
     }
 }
   
