@@ -6,9 +6,12 @@ class KanbanCard extends React.Component {
         return <Draggable draggableId={this.props.card.id} index={this.props.index}>
             {
                 (provided) => <div className='card' ref={provided.innerRef}
-                                   {...provided.dragHandleProps} {...provided.draggableProps}>
-                    {this.props.card.text}
-                </div>
+                         {...provided.dragHandleProps} {...provided.draggableProps}>
+                        {this.props.card.text}
+                        {provided.placeholder}
+                        <RemoveCardButton removeCard={this.props.removeCardFromColumn} card={this.props.card.id}/>
+                        {/*column={this.props.column.id}/>*/}
+                    </div>
             }
         </Draggable>
     }
@@ -23,7 +26,7 @@ class KanbanColumn extends React.Component {
                     (provided) => <div>
                         <div ref={provided.innerRef} {...provided.droppableProps} {...provided.droppablePlaceholder}>
                             {
-                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c}/>)
+                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c} removeCardFromColumn={this.props.removeCardFromColumn}/>)
                             }
                         </div>
                         {provided.placeholder}
@@ -113,6 +116,28 @@ export class AddCardButton extends React.Component
     }
 }
 
+
+export class RemoveCardButton extends React.Component
+{
+    constructor(props) {
+        super(props)
+        this.state = {editMode: false}
+    }
+    remove = () => {
+        this.props.removeCard(this.props.card)
+    }
+
+    render() {
+        return (
+            <button className="rm_card_button" style={{ float: "right" }} onClick={this.remove}>
+                X
+            </button>
+
+        );
+    }
+}
+
+
 export class Kanban extends React.Component {
     constructor(props) {
         super(props)
@@ -126,7 +151,8 @@ export class Kanban extends React.Component {
     render () {
         return <DragDropContext onDragEnd={this.onDragEnd}>
             {
-                this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c} createCard={this.props.createCard}/>)
+                this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c} createCard={this.props.createCard}
+                                                                  removeCardFromColumn={this.props.removeCardFromColumn}/>)
             }
             <AddColumnButton createColumn={this.props.createColumn}/>
         </DragDropContext>
