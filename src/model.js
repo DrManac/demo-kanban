@@ -10,9 +10,8 @@ export class Model {
     getColumnById(id) {
         return state.columns.find(c => c.id === id)
     }
-    removeCardFromColumn(colId, cardId) {
-        let col = this.getColumnById(colId)
-        col.cards = col.cards.filter(c => c.id !== cardId)
+    removeCardFromColumn(cardId) {
+        state.columns.forEach(col => {col.cards = col.cards.filter(c => c.id !== cardId)})
     }
     addCardToColumn(colId, card, index) {
         let col = this.getColumnById(colId)

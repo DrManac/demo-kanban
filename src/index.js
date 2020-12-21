@@ -15,7 +15,7 @@ class App extends React.Component {
     moveCard = (srcColumnId, srcIndex, destColumnId, destIndex) => {
         let srcColumn = this.model.getColumnById(srcColumnId);
         let card = srcColumn.cards[srcIndex];
-        this.model.removeCardFromColumn(srcColumnId, card.id);
+        this.model.removeCardFromColumn(card.id);
         this.model.addCardToColumn(destColumnId, card, destIndex);
         this.setState(this.model.getdata())
     }
@@ -30,6 +30,11 @@ class App extends React.Component {
         this.setState(this.model.getdata())
     }
 
+    removeCardFromColumn = (name) => {
+        this.model.removeCardFromColumn(name);
+        this.setState(this.model.getdata())
+    }
+
     render() {
         return [
             e(Toolbar, {key: 'toolbar', name:"Randomize", action: ()=>{
@@ -38,7 +43,7 @@ class App extends React.Component {
                 }}),
             e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard,
                 createColumn: this.createColumn,
-                createCard: this.createCard})
+                createCard: this.createCard, removeCardFromColumn: this.removeCardFromColumn})
         ]
     }
 }
