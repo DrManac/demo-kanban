@@ -24,6 +24,10 @@ export class Model {
         let col = this.getColumnById(id)
         col.cards.push({id: uuidv4(), text: name})
     }
+    editCardName(name, colId, cardId) {
+        let col = this.getColumnById(colId)
+        col.cards.find(c => c.id === cardId).text = name
+    }
 }
 
 function uuidv4() {

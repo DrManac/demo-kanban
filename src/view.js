@@ -2,18 +2,47 @@ import React from 'react';
 import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 class KanbanCard extends React.Component {
+    constructor(props) {
+        super(props)
+        this.state = {editMode: false}
+    }
+
+    beginEditMode = () => { this.setState({name: this.props.card.text, editMode: true}); }
+    endEditMode = () => { this.setState({editMode: false}); }
+
+    onAccept = () => {
+        this.props.editCardName(this.state.name, this.props.column.id, this.props.card.id);
+        this.endEditMode();
+    }
+
+    handleNameChange = (event) => {
+        this.setState({name: event.target.value});
+    }
+
     render () {
-        return <Draggable draggableId={this.props.card.id} index={this.props.index}>
-            {
-                (provided) => <div className='card' ref={provided.innerRef}
-                         {...provided.dragHandleProps} {...provided.draggableProps}>
-                        {this.props.card.text}
-                        {provided.placeholder}
-                        <RemoveCardButton removeCard={this.props.removeCardFromColumn} card={this.props.card.id}/>
-                        {/*column={this.props.column.id}/>*/}
+        if (this.state.editMode)
+            return <Draggable draggableId={this.props.card.id} index={this.props.index}>
+                {
+                    (provided) => <div className='card' ref={provided.innerRef}
+                                    {...provided.dragHandleProps} {...provided.draggableProps}>
+                        <input type='text' value={this.state.name} onChange={this.handleNameChange}/>
+                        <input type='button' value='OK' onClick={this.onAccept} />
+                        <input type='button' value='Cancel' onClick={this.endEditMode} />
                     </div>
-            }
-        </Draggable>
+                }
+            </Draggable>
+        else
+            return <Draggable draggableId={this.props.card.id} index={this.props.index}>
+                {
+                    (provided) => <div className='card' onClick={this.beginEditMode} ref={provided.innerRef}
+                            {...provided.dragHandleProps} {...provided.draggableProps}>
+                            {this.props.card.text}
+                            {provided.placeholder}
+                            <RemoveCardButton removeCard={this.props.removeCardFromColumn} card={this.props.card.id}/>
+                            {/*column={this.props.column.id}/>*/}
+                        </div>
+                }
+            </Draggable>
     }
 }
 
@@ -26,7 +55,7 @@ class KanbanColumn extends React.Component {
                     (provided) => <div>
                         <div ref={provided.innerRef} {...provided.droppableProps} {...provided.droppablePlaceholder}>
                             {
-                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c} removeCardFromColumn={this.props.removeCardFromColumn}/>)
+                                this.props.column.cards.map((c, i) => <KanbanCard key={c.id} index={i} card={c} removeCardFromColumn={this.props.removeCardFromColumn} column={this.props.column} editCardName={this.props.editCardName}/>)
                             }
                         </div>
                         {provided.placeholder}
@@ -152,7 +181,8 @@ export class Kanban extends React.Component {
         return <DragDropContext onDragEnd={this.onDragEnd}>
             {
                 this.props.state.columns.map((c) => <KanbanColumn key={c.id} column={c} createCard={this.props.createCard}
-                                                                  removeCardFromColumn={this.props.removeCardFromColumn}/>)
+                                                                  removeCardFromColumn={this.props.removeCardFromColumn}
+                                                                  editCardName={this.props.editCardName}/>)
             }
             <AddColumnButton createColumn={this.props.createColumn}/>
         </DragDropContext>

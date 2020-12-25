@@ -20,6 +20,11 @@ class App extends React.Component {
         this.setState(this.model.getdata())
     }
 
+    editCardName = (name, colId, cardId) => {
+        this.model.editCardName(name, colId, cardId);
+        this.setState(this.model.getdata())
+    }
+
     createColumn = (name) => {
         this.model.createColumn(name);
         this.setState(this.model.getdata())
@@ -43,7 +48,9 @@ class App extends React.Component {
                 }}),
             e(Kanban, {key: 'kanban', state: this.state, moveCard: this.moveCard,
                 createColumn: this.createColumn,
-                createCard: this.createCard, removeCardFromColumn: this.removeCardFromColumn})
+                createCard: this.createCard, 
+                removeCardFromColumn: this.removeCardFromColumn,
+                editCardName: this.editCardName})
         ]
     }
 }
