@@ -11,7 +11,12 @@ export class Model {
         return state.columns.find(c => c.id === id)
     }
     removeCardFromColumn(cardId) {
-        state.columns.forEach(col => {col.cards = col.cards.filter(c => c.id !== cardId)})
+        state.columns.forEach(col => {
+            col.cards = col.cards.filter(c => c.id !== cardId)
+        })
+    }
+    removeColumn(columnId) {
+        state.columns = state.columns.filter(column => column.id !== columnId)
     }
     addCardToColumn(colId, card, index) {
         let col = this.getColumnById(colId)
@@ -24,10 +29,7 @@ export class Model {
         let col = this.getColumnById(id)
         col.cards.push({id: uuidv4(), text: name})
     }
-    editCardName(name, colId, cardId) {
-        let col = this.getColumnById(colId)
-        col.cards.find(c => c.id === cardId).text = name
-    }
+
 }
 
 function uuidv4() {
